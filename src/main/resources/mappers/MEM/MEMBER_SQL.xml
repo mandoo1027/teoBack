@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="MEM">
+
+	<!-- 비로그인 회원ID 찾기 조회 -->
+	<select id="selectMemberByNm" parameterType="hashmap" resultType="hashmap">
+    <![CDATA[
+		SELECT
+		      MEM_ID               -- 회원ID
+		    , MEM_DIV_CD           -- 회원구분          
+		    , NLTY_DIV_CD          -- 내외국인구분      
+		    , MEM_NM               -- 회원성명          
+		    , MEM_PW               -- 비밀번호          
+		    , MEM_BRTH             -- 생년월일          
+		    , MEM_SE_CD            -- 성별              
+		    , MOBL_TELNO1          -- 전화번호1         
+		    , MOBL_TELNO2          -- 전화번호2         
+		    , MOBL_TELNO3          -- 전화번호3         
+		    , UMSMAIL AS EMAIL    -- 이메일주소
+		    , NTCN_CHNL_DIV_CD     -- 알림채널구분      
+		    , MEM_JOIN_STAT_CD     -- 회원가입상태      
+		    , MEM_JOIN_DATE        -- 회원가입일자
+		    , MEM_CNCL_DATE        -- 회원탈회일자      
+		    , MEM_CERT_DIV_CD      -- 회원인증방법
+		    , MEM_CNCL_RESN        -- 탈회사유          
+		    , REMARK               -- 비고
+		    , PRVC_OGCR_VRIFY_DT   -- 개인인증서검증일시 
+		    , LAST_CHNL_CERT_DT    -- 최종채널인증일시  
+		    , LAST_LOGIN_DT        -- 최종로그인일시    
+		    , LOGIN_ERR_CNT        -- 로그인오류횟수
+		FROM MEMBER
+    ]]>
+		<trim prefix="WHERE">
+        	<![CDATA[
+        		MEM_JOIN_STAT_CD <> '09'
+        	]]>
+			<if test="memNm != null and memNm != ''">
+				AND MEM_NM = #{memNm}
+			</if>
+			<if test="memId != null and memId != ''">
+				AND MEM_ID = #{memId}
+			</if>
+			<if test="memBrth != null and memBrth != ''">
+				AND MEM_BRTH = #{memBrth}
+			</if>
+			<if test="memSeCd != null and memSeCd != ''">
+				AND MEM_SE_CD = #{memSeCd}
+			</if>
+			<if test='ntcnChnlDivCd == "1" or ntcnChnlDivCd == "9"'> -- SMS
+				AND MOBL_TELNO1 = #{moblTelno1}
+				AND MOBL_TELNO2 = #{moblTelno2}
+				AND MOBL_TELNO3 = #{moblTelno3}
+			</if>
+			<if test='ntcnChnlDivCd == "2"'> -- EMAIL
+				AND UMSMAIL = #{email}
+			</if>
+		</trim>
+	</select>
+
+</mapper>
