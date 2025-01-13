@@ -33,33 +33,27 @@ public class HcoController {
         ResultVO result = new ResultVO();
         boolean isPass = true;
         if (StringUtil.isNullOrEmpty(req.getId())) {
-           // throw new UserException("MEM001");//"아이디를 입력하세요.");
-            result.setFailCode();
-            return result;
+           throw new UserException("MEM001");//"아이디를 입력하세요.");
         }
         if (StringUtil.isNullOrEmpty(req.getPwd())) {
-            //throw new UserException("MEM002");//"비밀번호를 입력하세요.");
-            result.setFailCode();
-            return result;
+            throw new UserException("MEM002");//"비밀번호를 입력하세요.");
         }
         List<AdminVO> rvo = hco0101Service.HCO0101S01(req);
         AdminVO getData ;
         if(rvo.size() == 0 ){
-            //throw new UserException("MEM002");//"아이디 또는 비밀번호가 일치하지 않습니다.");
-            result.setFailCode();
-            return result;
+            throw new UserException("MEM002");//"아이디 또는 비밀번호가 일치하지 않습니다.");
         }else{
             getData = rvo.get(0);
             if(!getData.getPwd().equals(req.getPwd())){
-                //throw new UserException("MEM002");//"아이디 또는 비밀번호가 일치하지 않습니다.");
-                result.setFailCode();
-                return result;
+                throw new UserException("MEM002");//"아이디 또는 비밀번호가 일치하지 않습니다.");
             }
         }
 
 
         String newSessionId = session.getId();
         getData.setCurrentSessionId(newSessionId);
+        getData.setPwd("");
+
         session.setAttribute("user", getData);
         result.setResultData(getData);
         result.setSucessCode();
@@ -79,6 +73,8 @@ public class HcoController {
             resultVo.setResultData(userVo);
         }else{
             resultVo.setFailCode();
+            String data = "세션이 만료되어 로그아웃 상태입니다.";
+            resultVo.setResultData(data);
         }
 
         return resultVo;

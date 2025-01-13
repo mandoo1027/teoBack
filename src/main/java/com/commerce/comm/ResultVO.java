@@ -13,7 +13,7 @@ import java.util.Objects;
 public class ResultVO {
     private String resultCode;
     private String resultMsg;
-    private boolean result;
+    private boolean success;
 
     private Object data;
     public void setResultData(Object resultData) {
@@ -22,12 +22,11 @@ public class ResultVO {
     public void setSucessCode() {
         this.resultCode = "0000";
         this.resultMsg = "성공";
-        this.result = true;
+        this.success = true;
     }
     public void setFailCode() {
         this.resultCode = "9999";
         this.resultMsg = "실패";
-        this.result = false;
-        this.setResultData(null);
+        this.success = false;
     }
 }

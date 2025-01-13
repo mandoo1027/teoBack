@@ -3,6 +3,7 @@ package com.commerce.exception;
 import com.commerce.comm.CamelKeyMap;
 import com.commerce.comm.CommonSaveManager;
 import com.commerce.comm.ErrorResponse;
+import com.commerce.comm.ResultVO;
 import com.commerce.exception.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST) // 상태 코드를 설정할 수 있음
     @ResponseBody
-    public ResponseEntity<ErrorResponse> handleUserException(UserException ex) {
+    public ResponseEntity<ResultVO> handleUserException(UserException ex) {
         List<CamelKeyMap> list = commonCodeManager.getSaveData("codeList");
         Optional<CamelKeyMap> matchingItem = list.stream()
                 .filter(map -> ex.getMessage().equals(map.get("code")))  // "code" 컬럼의 값과 비교
@@ -37,8 +38,11 @@ public class GlobalExceptionHandler {
         }else{
             errorResponse = new ErrorResponse(ex.getMessage(), "등록된 에러코드가 없습니다.");
         }
+        ResultVO result = new ResultVO();
+        result.setResultData(errorResponse);
+        result.setFailCode();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(errorResponse);
+                .body(result);
     }
 }
